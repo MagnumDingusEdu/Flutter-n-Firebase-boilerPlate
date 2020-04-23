@@ -49,8 +49,7 @@ class _MainAppState extends State<MainApp> {
             context: context,
             builder: (BuildContext context) => CustomDialog(
               title: _title,
-              description:
-                  _message,
+              description: _message,
             ),
           );
         },
@@ -64,13 +63,98 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Firebase Notifications"),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-        child: Center(child: Text("Waiting for notifications....")),
+    Future<bool> _onBackPressed() {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(25),
+              ),
+            ),
+            title: Text(
+              'Confirm Exit',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 25.0),
+            ),
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text("Are you sure you want to exit?\n"),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.arrow_back_ios,
+                            size: 16.0,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'Stay',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 18.0),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    GestureDetector(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Leave',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 18.0),
+                          ),
+                          SizedBox(width: 5,),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 16.0,
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Firebase Notifications"),
+        ),
+        body: Container(
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+          child: Center(child: Text("Waiting for notifications....")),
+        ),
       ),
     );
   }
@@ -126,19 +210,15 @@ class _CustomDialogState extends State<CustomDialog> {
                   Text(
                     widget.title,
                     style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black
-                    ),
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black),
                   ),
                   SizedBox(height: 16.0),
                   Text(
                     widget.description,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.black
-                    ),
+                    style: TextStyle(fontSize: 16.0, color: Colors.black),
                   ),
                   SizedBox(height: 24.0),
                 ],
