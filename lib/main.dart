@@ -9,11 +9,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Firebase Notifications",
+      color: Colors.red,
+      theme: ThemeData(
+        accentColor: Colors.red,
+        brightness: Brightness.dark,
+      ),
       home: MainApp(),
     );
   }
 }
-
 
 class MainApp extends StatefulWidget {
   @override
@@ -21,11 +25,10 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-    String _title = '';
+  String _title = '';
   String _message = '';
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
 
   @override
   void initState() {
@@ -36,42 +39,156 @@ class _MainAppState extends State<MainApp> {
   void setUpMessaging() {
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-      print('on message $message');
-      setState(() {
-        _title = message['notification']['title'];
-        _message = message['notification']['body'];
-
-      });
-
-    }, onResume: (Map<String, dynamic> message) async {
-
-    }, onLaunch: (Map<String, dynamic> message) async {
-
-    });
+          print('on message $message');
+          setState(() {
+            _title = message['notification']['title'];
+            _message = message['notification']['body'];
+          });
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomDialog(
+              title: _title,
+              description:
+                  _message,
+            ),
+          );
+        },
+        onResume: (Map<String, dynamic> message) async {},
+        onLaunch: (Map<String, dynamic> message) async {});
 
     FlutterError.onError = null;
     _firebaseMessaging.getToken().then((token) => print("tokenkey: " + token));
-    _firebaseMessaging.subscribeToTopic("");
+    _firebaseMessaging.subscribeToTopic("topic");
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Firebase Notifications"),
-        
       ),
-
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-        child: Center(
-          child: Text("Waiting for notifications"),
+        child: Center(child: Text("Waiting for notifications....")),
+      ),
+    );
+  }
+}
 
+class CustomDialog extends StatefulWidget {
+  String title, description;
 
+  CustomDialog({
+    @required this.title,
+    @required this.description,
+  });
+
+  @override
+  _CustomDialogState createState() => _CustomDialogState();
+}
+
+class _CustomDialogState extends State<CustomDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Consts.padding),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: SizedBox(
+        child: Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(
+                top: Consts.avatarRadius + Consts.padding,
+                bottom: Consts.padding,
+                left: Consts.padding,
+                right: Consts.padding,
+              ),
+              margin: EdgeInsets.only(top: Consts.avatarRadius),
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(Consts.padding),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: const Offset(0.0, 10.0),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // To make the card compact
+                children: <Widget>[
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    widget.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black
+                    ),
+                  ),
+                  SizedBox(height: 24.0),
+                ],
+              ),
+            ),
+            Positioned(
+              left: Consts.padding,
+              right: Consts.padding,
+              child: CircleAvatar(
+                child: Icon(
+                  Icons.check,
+                  size: 40,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.red,
+                radius: Consts.avatarRadius,
+              ),
+            ),
+            //...bottom card part,
+            //...top circlular image part,
+          ],
         ),
       ),
     );
   }
+}
+
+class Consts {
+  Consts._();
+
+  static const double padding = 16.0;
+  static const double avatarRadius = 40.0;
+}
+
+Widget _button(String text, void function(), bool canc) {
+  return RaisedButton(
+    highlightElevation: 0.0,
+    splashColor: Colors.grey,
+    elevation: 20.0,
+    color: canc ? Colors.white : Colors.red,
+    shape:
+        RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+    child: Text(
+      text,
+      style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: canc ? Colors.black : Colors.white,
+          fontSize: 20),
+    ),
+    onPressed: () {
+      function();
+    },
+  );
 }
