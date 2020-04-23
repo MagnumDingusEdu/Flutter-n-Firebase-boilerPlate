@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       home: MainApp(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -58,7 +59,7 @@ class _MainAppState extends State<MainApp> {
 
     FlutterError.onError = null;
     _firebaseMessaging.getToken().then((token) => print("tokenkey: " + token));
-    _firebaseMessaging.subscribeToTopic("topic");
+    _firebaseMessaging.subscribeToTopic("hello");
   }
 
   @override
