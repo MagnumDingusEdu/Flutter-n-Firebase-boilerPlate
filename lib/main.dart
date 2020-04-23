@@ -124,7 +124,9 @@ class _MainAppState extends State<MainApp> {
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 18.0),
                           ),
-                          SizedBox(width: 5,),
+                          SizedBox(
+                            width: 5,
+                          ),
                           Icon(
                             Icons.arrow_forward_ios,
                             color: Colors.white,
